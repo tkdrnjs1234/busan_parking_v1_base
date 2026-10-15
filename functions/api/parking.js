@@ -10,13 +10,13 @@ export async function onRequest(context) {
     }
 
     try {
-        // 1. 부산광역시 공영주차장 정보 조회 API 호출
         const listUrl = `https://apis.data.go.kr/6260000/BusanPblcPrkngInfoService/getPblcPrkngInfo?ServiceKey=${apiKey}&pageNo=1&numOfRows=100&resultType=json`;
         
         const response = await fetch(listUrl);
         const data = await response.json();
 
-        const parkingList = data.getPblcPrkngInfo?.body?.items?.item || [];
+        // 올바른 JSON 경로(response.body.items.item)로 수정
+        const parkingList = data.response?.body?.items?.item || [];
 
         let results = parkingList.map(park => {
             return {
@@ -36,7 +36,7 @@ export async function onRequest(context) {
             };
         });
 
-        // 2. 검색어 필터링
+        // 검색어 필터링
         if (searchName) {
             results = results.filter(p => p.parknm && p.parknm.includes(searchName));
         }
